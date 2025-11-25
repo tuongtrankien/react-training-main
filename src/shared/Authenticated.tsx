@@ -35,7 +35,6 @@ const AuthenticatedProvider = ({children}: {children: ReactElement}) => {
     };
 
     const updateUser = (updatedUser: User) => {
-        localStorage.removeItem("user");
         setUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
     };

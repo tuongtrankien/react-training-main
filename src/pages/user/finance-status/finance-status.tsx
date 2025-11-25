@@ -2,7 +2,11 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { UserKYCFormData } from "../kyc/kyc";
 import MultipleInputFieldSection from "../../../components/inputs/MultipleInputFieldSection";
 
-const FinanceStatus = () => {
+interface FinanceStatusProps {
+  isReadOnly?: boolean;
+}
+
+const FinanceStatus = ({ isReadOnly = false }: FinanceStatusProps) => {
   const { register, control, formState: { errors } } = useFormContext<UserKYCFormData>();
   const financeStatus = useWatch({control, name: 'financeStatus'});
 
@@ -36,6 +40,7 @@ const FinanceStatus = () => {
                   <select
                     id={`financeStatus.incomes.${index}.type`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`financeStatus.incomes.${index}.type`)}
                   >
                     <option value="Salary">Salary</option>
@@ -60,6 +65,7 @@ const FinanceStatus = () => {
                     id={`financeStatus.incomes.${index}.amount`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
                     placeholder="Enter amount"
+                    disabled={isReadOnly}
                     {...register(`financeStatus.incomes.${index}.amount`)}
                   />
                   {errors.financeStatus?.incomes && errors.financeStatus.incomes[index]?.amount && (
@@ -91,6 +97,7 @@ const FinanceStatus = () => {
                   <select
                     id={`financeStatus.assets.${index}.type`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`financeStatus.assets.${index}.type`)}
                   >
                     <option value="bond">Bond</option>
@@ -116,6 +123,7 @@ const FinanceStatus = () => {
                     id={`financeStatus.assets.${index}.amount`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
                     placeholder="Enter amount"
+                    disabled={isReadOnly}
                     {...register(`financeStatus.assets.${index}.amount`)}
                   />
                   {errors.financeStatus?.assets && errors.financeStatus.assets[index]?.amount && (
@@ -177,6 +185,7 @@ const FinanceStatus = () => {
                   <select
                     id={`financeStatus.liabilities.${index}.type`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`financeStatus.liabilities.${index}.type`)}
                   >
                     <option value="personal-loan">Personal Loan</option>
@@ -201,6 +210,7 @@ const FinanceStatus = () => {
                     id={`financeStatus.liabilities.${index}.amount`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
                     placeholder="Enter amount"
+                    disabled={isReadOnly}
                     {...register(`financeStatus.liabilities.${index}.amount`)}
                   />
                   {errors.financeStatus?.liabilities && errors.financeStatus.liabilities[index]?.amount && (
@@ -259,6 +269,7 @@ const FinanceStatus = () => {
                   <select
                     id={`financeStatus.sourceOfWealth.${index}.type`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`financeStatus.sourceOfWealth.${index}.type`)}
                   >
                     <option value="inheritance">Inheritance</option>
@@ -283,6 +294,7 @@ const FinanceStatus = () => {
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
                     placeholder="Enter amount"
                     required
+                    disabled={isReadOnly}
                     {...register(`financeStatus.sourceOfWealth.${index}.amount`)}
                   />
                   {errors.financeStatus?.sourceOfWealth && errors.financeStatus.sourceOfWealth[index]?.amount && (
@@ -342,6 +354,7 @@ const FinanceStatus = () => {
             <select
               id="investment-experience"
               className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+              disabled={isReadOnly}
               {...register('financeStatus.investmentExperience')}
             >
               <option value="<5-years">{`< 5 years`}</option>
@@ -364,6 +377,7 @@ const FinanceStatus = () => {
             <select
               id="risk-tolerance"
               className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+              disabled={isReadOnly}
               {...register('financeStatus.riskTolerance')}
             >
               <option value="10%">10%</option>

@@ -1,13 +1,41 @@
-import React, {useContext} from "react";
+import React, {useContext, useState, useEffect, useRef} from "react";
 import {Link} from "react-router-dom";
 import {AuthenticatedContext} from "../../shared/Authenticated";
 import { AuthPath } from "../../shared/Constants";
 
 const Header = () => {
-    const { user } = useContext(AuthenticatedContext);
-    const links: Array<Record<string, string>> = [];
+    const { user, logout } = useContext(AuthenticatedContext);
+    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+    const navRef = useRef<HTMLElement>(null);
+
+    const toggleDropdown = (dropdown: string) => {
+        setOpenDropdown(openDropdown === dropdown ? null : dropdown);
+    };
+
+    const handleLogout = async () => {
+        await logout();
+        setOpenDropdown(null);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            const isToggleButton = target.closest('[data-dropdown-toggle]') || 
+                                  target.closest('button[onClick*="toggleDropdown"]');
+            
+            if (!isToggleButton && navRef.current && !navRef.current.contains(target)) {
+                setOpenDropdown(null);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
-        <nav className="fixed z-30 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+        <nav ref={navRef} className="fixed z-30 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div className="px-3 py-3 lg:px-5 lg:pl-3">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center justify-start">
@@ -59,7 +87,8 @@ const Header = () => {
                                     </svg>
                                 </button>
 
-                                <button type="button" data-dropdown-toggle="notification-dropdown"
+                                <div className="relative">
+                                <button type="button" onClick={() => toggleDropdown('notification')}
                                         className="p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700">
                                     <span className="sr-only">View notifications</span>
 
@@ -71,12 +100,12 @@ const Header = () => {
                                 </button>
 
                                 <div
-                                    className="z-20 z-50 hidden max-w-sm my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:divide-gray-600 dark:bg-gray-700"
+                                    className={`z-50 ${openDropdown === 'notification' ? '' : 'hidden'} max-w-sm my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:divide-gray-600 dark:bg-gray-700`}
                                     id="notification-dropdown" data-popper-placement="bottom" style={{
                                     position: "absolute",
-                                    inset: "0px auto auto 0px",
-                                    margin: "0px",
-                                    transform: "translate3d(1564px, 1505px,0px)"
+                                    top: "100%",
+                                    right: "0",
+                                    margin: "0.25rem 0 0 0"
                                 }}>
                                     <div
                                         className="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -242,8 +271,10 @@ const Header = () => {
                                         </div>
                                     </a>
                                 </div>
+                                </div>
 
-                                <button type="button" data-dropdown-toggle="apps-dropdown"
+                                <div className="relative">
+                                <button type="button" onClick={() => toggleDropdown('apps')}
                                         className="hidden p-2 text-gray-500 rounded-lg sm:flex hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700">
                                     <span className="sr-only">View notifications</span>
 
@@ -255,12 +286,12 @@ const Header = () => {
                                 </button>
 
                                 <div
-                                    className="z-20 z-50 hidden max-w-sm my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:bg-gray-700 dark:divide-gray-600"
+                                    className={`z-50 ${openDropdown === 'apps' ? '' : 'hidden'} max-w-sm my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:bg-gray-700 dark:divide-gray-600`}
                                     id="apps-dropdown" data-popper-placement="bottom" style={{
                                     position: "absolute",
-                                    inset: "0px auto auto 0px",
-                                    margin: "0px",
-                                    transform: "translate3d(1604px, 1505px, 0px)"
+                                    top: "100%",
+                                    right: "0",
+                                    margin: "0.25rem 0 0 0"
                                 }}>
                                     <div
                                         className="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -380,6 +411,7 @@ const Header = () => {
                                         </a>
                                     </div>
                                 </div>
+                                </div>
                                 <button id="theme-toggle" data-tooltip-target="tooltip-toggle" type="button"
                                         className="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
                                     <svg id="theme-toggle-dark-icon" className="w-5 h-5" fill="currentColor"
@@ -411,25 +443,24 @@ const Header = () => {
                                 </div>
 
                                 <div className="flex items-center ml-3">
-                                    <div>
-                                        <button type="button"
+                                    <div className="relative">
+                                        <button type="button" onClick={() => toggleDropdown('user')}
                                                 className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                                                id="user-menu-button-2" aria-expanded="false"
-                                                data-dropdown-toggle="dropdown-2">
+                                                id="user-menu-button-2" aria-expanded={openDropdown === 'user'}>
                                             <span className="sr-only">Open user menu</span>
                                             <img className="w-8 h-8 rounded-full"
-                                                 src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                                                 alt="user photo"/>
+                                                 src={user?.image || "https://flowbite.com/docs/images/people/profile-picture-5.jpg"}
+                                                 alt=""/>
                                         </button>
                                     </div>
 
                                     <div
-                                        className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+                                        className={`z-50 ${openDropdown === 'user' ? '' : 'hidden'} my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600`}
                                         id="dropdown-2" data-popper-placement="bottom" style={{
                                         position: "absolute",
-                                        inset: "0px auto auto 0px",
-                                        margin: "0px",
-                                        transform: "translate3d(1692px, 1501px, 0px)"
+                                        top: "100%",
+                                        right: "0",
+                                        margin: "0.25rem 0 0 0"
                                     }}>
                                         <div className="px-4 py-3" role="none">
                                             <p className="text-sm text-gray-900 dark:text-white" role="none">
@@ -439,27 +470,21 @@ const Header = () => {
                                                role="none">
                                                 {user?.email}
                                             </p>
+                                            <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
+                                               role="none">
+                                                Role: <span className="capitalize">{user?.role}</span>
+                                            </p>
                                         </div>
                                         <ul className="py-1" role="none">
                                             <li>
-                                                <a href="#"
+                                                <Link to="/"
                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                   role="menuitem">Dashboard</a>
+                                                   role="menuitem">Dashboard</Link>
                                             </li>
                                             <li>
-                                                <a href="#"
-                                                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                   role="menuitem">Settings</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"
-                                                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                   role="menuitem">Earnings</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"
-                                                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                   role="menuitem">Sign out</a>
+                                                <button onClick={handleLogout}
+                                                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   role="menuitem">Sign out</button>
                                             </li>
                                         </ul>
                                     </div>

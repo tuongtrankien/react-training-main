@@ -2,19 +2,28 @@ import {RouteObject} from "react-router";
 import UserKYC from "./kyc/kyc";
 import User from "./user";
 import Profile from "./profile/profile";
+import ProtectedRoute from "../../shared/ProtectedRoute";
 
 const userRoutes: RouteObject[] = [
     {
         path: 'user',
-        element: <User/>,
+        element: <User />,
         children: [
             {
                 path: ':id/pi',
-                element: <Profile />
+                element: (
+                <ProtectedRoute requireOwnProfile>
+                    <Profile />
+                </ProtectedRoute>
+                )
             },
             {
                 path: ':id/kyc',
-                element: <UserKYC></UserKYC>
+                element: (
+                <ProtectedRoute requireOwnProfile>
+                    <UserKYC></UserKYC>
+                </ProtectedRoute>
+                )
             }
         ]
     }

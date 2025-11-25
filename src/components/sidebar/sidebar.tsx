@@ -1,17 +1,27 @@
 import {Link} from "react-router-dom";
+import { AuthenticatedContext } from "../../shared/Authenticated";
+import { useContext } from "react";
 interface MenuItem {
     name: string;
     link: string;
     icon: string
 }
 const Sidebar = () => {
+    const { user } = useContext(AuthenticatedContext);
+
     const menuItems: MenuItem[] = [
+        {
+            name: 'My Profile',
+            link: `/pages/user/${user?.id}/pi`,
+            icon: '/icons/lab-profile.svg'
+        },
         {
             name: 'Submit Review',
             link: "/pages/review",
             icon: '/icons/settings.svg'
-        }
+        }        
     ];
+    
     return (
         <aside id="sidebar"
                className="fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 hidden w-64 h-full pt-16 font-normal duration-75 lg:flex transition-width"

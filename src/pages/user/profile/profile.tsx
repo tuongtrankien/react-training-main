@@ -6,15 +6,25 @@ import api from "../../../api/axios";
 import { useNavigate, useParams } from "react-router";
 
 export default function Profile() {
-  const { updateUser } = useContext(AuthenticatedContext);
+  const { user ,updateUser } = useContext(AuthenticatedContext);
   const [formData, setFormData] = useState<Partial<User>>({});
   const [isEditing, setIsEditing] = useState(false);
-
+  
   const params = useParams();
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        // get from local storage of current user if exists
+        const currentUserlocalData = localStorage.getItem(`user`);
+        const parsedUser = currentUserlocalData ? JSON.parse(currentUserlocalData) : null;
+        
+        if (parsedUser && parsedUser.id?.toString() === params.id) {
+          setFormData(parsedUser);
+          return;
+        }
+
+        // simulate call mock API
         const response = await api.get(`/users/${params.id}`);
         console.log("Fetched user data:", response.data);
         setFormData(response.data);
@@ -22,8 +32,11 @@ export default function Profile() {
         console.error("Error fetching user data:", error);
       }
     };
-    fetchUserData();
-  }, []);
+    
+    if (params.id) {
+      fetchUserData();
+    }
+  }, [params.id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -166,7 +179,7 @@ export default function Profile() {
           General information
         </h3>
         <form onSubmit={handleSubmit}>
-          <fieldset disabled={!isEditing}>
+          <fieldset disabled={!isEditing && user?.role !== 'admin'}>
             <div className="grid grid-cols-6 gap-6">
               <div className="col-span-6 sm:col-span-3">
                 <label
@@ -281,29 +294,41 @@ export default function Profile() {
             </div>
           </fieldset>
           <div className="col-span-6 sm:col-full mt-6">
-            {!isEditing ? (
-              <button
-                className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                type="button"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit Profile
-              </button>
-            ) : (
+            {user?.role !== 'admin' && (
               <>
-                <button
-                  className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                  type="submit"
-                >
-                  Save Changes
-                </button>
-                <button
-                  className="ml-1 text-gray-900 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border border-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-primary-800"
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                >
-                  Cancel
-                </button>
+                {!isEditing ? (
+                  <button
+                    className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      console.log("Edit Profile clicked, setting isEditing to true");
+                      setIsEditing(true);
+                    }}
+                  >
+                    Edit Profile
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                      type="submit"
+                    >
+                      Save Changes
+                    </button>
+                    <button
+                      className="ml-1 text-gray-900 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center border border-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-primary-800"
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        console.log("Cancel clicked, setting isEditing to false");
+                        setIsEditing(false);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                )}
               </>
             )}
             <button

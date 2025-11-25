@@ -2,9 +2,12 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { UserKYCFormData } from "../kyc/kyc";
 import MultipleInputFieldSection from "../../../components/inputs/MultipleInputFieldSection";
 import { EmailItem } from "../../../models/emailItem";
-import { User } from "../../../models/user";
 
-const PersonalInformation = () => {
+interface PersonalInformationProps {
+  isReadOnly?: boolean;
+}
+
+const PersonalInformation = ({ isReadOnly = false }: PersonalInformationProps) => {
   const { control, register, formState: { errors } } = useFormContext<UserKYCFormData>();
   const dob = useWatch({ control, name: "basicInfo.dob" });
   const ageCalc = (dob: string) => {
@@ -33,6 +36,7 @@ const PersonalInformation = () => {
               id="first-name"
               className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
               placeholder="Enter your first name"
+              disabled={isReadOnly}
               {...register("basicInfo.firstName")}
             />
             {errors.basicInfo?.firstName && (
@@ -50,6 +54,7 @@ const PersonalInformation = () => {
               id="last-name"
               className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
               placeholder="Enter your last name"
+              disabled={isReadOnly}
               {...register("basicInfo.lastName")}
             />
             {errors.basicInfo?.lastName && (
@@ -67,6 +72,7 @@ const PersonalInformation = () => {
               id="middle-name"
               className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
               placeholder="Enter your middle name"
+              disabled={isReadOnly}
               {...register("basicInfo.middleName")}
             />
           </div>
@@ -78,6 +84,7 @@ const PersonalInformation = () => {
               type="date"
               id="dob"
               className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+              disabled={isReadOnly}
               {...register("basicInfo.dob")}
             />
             {errors.basicInfo?.dob && (
@@ -95,6 +102,7 @@ const PersonalInformation = () => {
               id="age"
               className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
               placeholder="Enter your age"
+              disabled={isReadOnly}
               value={dob ? ageCalc(dob) : ""}
             />
             {errors.basicInfo?.age && (
@@ -138,6 +146,7 @@ const PersonalInformation = () => {
                     id={`country-${index}`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
                     placeholder="Enter country"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.addresses.${index}.country`)}
                   />
                   {errors.contactInfo?.addresses?.[index]?.country && (
@@ -158,6 +167,7 @@ const PersonalInformation = () => {
                     id={`city-${index}`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
                     placeholder="Enter city"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.addresses.${index}.city`)}
                   />
                   {errors.contactInfo?.addresses?.[index]?.city && (
@@ -178,6 +188,7 @@ const PersonalInformation = () => {
                     id={`street-${index}`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
                     placeholder="Enter street"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.addresses.${index}.street`)}
                   />
                   {errors.contactInfo?.addresses?.[index]?.street && (
@@ -198,6 +209,7 @@ const PersonalInformation = () => {
                     id={`postal-code-${index}`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
                     placeholder="Enter postal code"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.addresses.${index}.postalCode`)}
                   />
                 </div>
@@ -211,6 +223,7 @@ const PersonalInformation = () => {
                   <select
                     id={`address-type-${index}`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.addresses.${index}.type`)}
                   >
                     <option value="mailing">Mailing</option>
@@ -251,6 +264,7 @@ const PersonalInformation = () => {
                     id={`email-address-${index}`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
                     placeholder="Enter email address"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.emails.${index}.email`)}
                   />
                   {errors.contactInfo?.emails?.[index]?.email && (
@@ -269,6 +283,7 @@ const PersonalInformation = () => {
                   <select
                     id={`email-type-${index}`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.emails.${index}.type`)}
                   >
                     <option value="personal">Personal</option>
@@ -290,6 +305,7 @@ const PersonalInformation = () => {
                   <select
                     id={`email-preferred-${index}`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.emails.${index}.preferred`)}
                   >
                     <option value="false">No</option>
@@ -325,6 +341,7 @@ const PersonalInformation = () => {
                     id={`phone-number-${index}`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
                     placeholder="Enter phone number (10 digits)"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.phones.${index}.phone`)}
                   />
                   {errors.contactInfo?.phones?.[index]?.phone && (
@@ -343,6 +360,7 @@ const PersonalInformation = () => {
                   <select
                     id={`phone-type-${index}`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.phones.${index}.type`)}
                   >
                     <option value="personal">Personal</option>
@@ -364,6 +382,7 @@ const PersonalInformation = () => {
                   <select
                     id={`phone-preferred-${index}`}
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.phones.${index}.preferred`)}
                   >
                     <option value="false">No</option>
@@ -394,6 +413,7 @@ const PersonalInformation = () => {
                   <select
                     id="id-type"
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.identification.${index}.idType`)}
                   >
                     <option value="national-id">National ID Card</option>
@@ -413,6 +433,7 @@ const PersonalInformation = () => {
                     type="date"
                     id="id-expired"
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.identification.${index}.expirationDate`)}
                   />
                   {errors.contactInfo?.identification?.[index]?.expirationDate && (
@@ -429,6 +450,7 @@ const PersonalInformation = () => {
                     type="file"
                     id="id-file"
                     className="w-full px-4 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.identification.${index}.documentFile`)}
                   />
                   {errors.contactInfo?.identification?.[index]?.documentFile && (
@@ -461,6 +483,7 @@ const PersonalInformation = () => {
                   <select
                     id="occupation"
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.occupation.${index}.occupation`)}
                   >
                     <option value="unemployed">Unemployed</option>
@@ -486,6 +509,7 @@ const PersonalInformation = () => {
                     type="date"
                     id="occupation-from"
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.occupation.${index}.fromDate`)}
                   />
                   {errors.contactInfo?.occupation?.[index]?.fromDate && (
@@ -505,6 +529,7 @@ const PersonalInformation = () => {
                     type="date"
                     id="occupation-to"
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-color"
+                    disabled={isReadOnly}
                     {...register(`contactInfo.occupation.${index}.toDate`)}
                   />
                   {errors.contactInfo?.occupation?.[index]?.toDate && (

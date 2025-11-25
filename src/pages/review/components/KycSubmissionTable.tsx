@@ -1,14 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { formatISODate } from "../../../utils/date";
+import { KycStatus, KycRecord } from "../../../models/kycsubmission";
 
-export type KycStatus = "Active" | "Pending" | "Inactive";
 
-export type KycRecord = {
-  id: string;
-  name: string;
-  status: KycStatus;
-  dateISO: string;
-};
 
 type KycSubmissionTableProps = {
   title?: string;
@@ -191,29 +185,31 @@ export default function KycSubmissionTable({
                 )}
               >
                 <td className="px-6 py-5">
-                  <span className="text-slate-800">{r.name}</span>
+                  <span className="text-slate-800">{r.fullName}</span>
                 </td>
                 <td className="px-6 py-5">
                   <StatusBadge status={r.status} />
                 </td>
                 <td className="px-6 py-5">
                   <span className="text-slate-700">
-                    {formatISODate(r.dateISO)}
+                    {formatISODate(r.submittedAt)}
                   </span>
                 </td>
-                <td className="px-6 py-5">
-                  <ActionButtons
-                    id={r.id}
-                    onApprove={(id) => {
-                      onApprove?.(id);
-                      if (!onApprove) console.log("Approved:", id);
-                    }}
-                    onReject={(id) => {
-                      onReject?.(id);
-                      if (!onReject) console.log("Rejected:", id);
-                    }}
-                  />
-                </td>
+                {r.status === "Pending" && (
+                  <td className="px-6 py-5">
+                    <ActionButtons
+                      id={r.id}
+                      onApprove={(id) => {
+                        onApprove?.(id);
+                        if (!onApprove) console.log("Approved:", id);
+                      }}
+                      onReject={(id) => {
+                        onReject?.(id);
+                        if (!onReject) console.log("Rejected:", id);
+                      }}
+                    />
+                  </td>
+                )}
               </tr>
             ))}
 

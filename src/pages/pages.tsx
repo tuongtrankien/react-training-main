@@ -11,7 +11,7 @@ const Pages = () => {
         <>
             <Header/>
 
-            { isAuthenticated ? (
+            { isAuthenticated.user ? (
                 <div className="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
                     <Sidebar/>
                     <div id="main-content"

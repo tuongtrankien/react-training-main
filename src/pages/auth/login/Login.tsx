@@ -21,7 +21,7 @@ const Login = () => {
             if (userData?.role === 'admin') {
                 navigate('/pages/')
             } else {
-                navigate(`${UserPath.PERSONAL_INFORMATION(userData?.id.toString())}`);
+                navigate(`/pages/${UserPath.PERSONAL_INFORMATION(userData?.id.toString())}`);
             }
         }
         catch (error)
